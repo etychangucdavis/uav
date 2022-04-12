@@ -52,12 +52,26 @@ class Node_defer:
       node.Delete_W_Neighbor(self)
       node.SetGrayNeighborList(self)
 
-  # 染黑此節點，並更新周圍鄰居的白鄰居表與黑鄰居表
+  # 染黑此節點，並更新周圍鄰居的黑鄰居表
   def ToBlack(self):
     self.color = 1
     for node in self.neighbor_list:
       node.Delete_G_Neighbor(self)
       node.SetBlackNeighborList(self)
+
+  # 染黑此節點，並更新周圍鄰居的白鄰居表 Greedy中使用
+  def ToBlack_greedy(self):
+    self.color = 1
+    for node in self.neighbor_list:
+      node.Delete_W_Neighbor(self)
+      node.SetBlackNeighborList(self)
+
+  # 染白此節點，並更新周圍鄰居的黑鄰居表 Greedy中使用
+  def ToWhite_greedy(self):
+    self.color = 0
+    for node in self.neighbor_list:
+      node.Delete_B_Neighbor(self)
+      node.SetWhiteNeighborList(self)
 
   # 設置白鄰居列表
   def SetWhiteNeighborList(self, white_neighbor):
@@ -87,13 +101,17 @@ class Node_defer:
   def GetBlackNeighborList(self):
     return self.neighbor_b_list
 
-  # 刪除某個鄰居 (變黑的鄰居)
-  def Delete_W_Neighbor(self, node_toBlack):
-    self.neighbor_w_list = [ _ for _ in self.neighbor_w_list if _ is not node_toBlack]
+  # 白鄰居表中刪除某個鄰居 (變灰的鄰居)
+  def Delete_W_Neighbor(self, node_toChange):
+    self.neighbor_w_list = [ _ for _ in self.neighbor_w_list if _ is not node_toChange]
+
+  # 灰鄰居表中刪除某個鄰居 (變黑的鄰居)
+  def Delete_G_Neighbor(self, node_toChange):
+    self.neighbor_g_list = [ _ for _ in self.neighbor_g_list if _ is not node_toChange]
 
   # 刪除某個鄰居 (變灰的鄰居)
-  def Delete_G_Neighbor(self, node_toGray):
-    self.neighbor_g_list = [ _ for _ in self.neighbor_g_list if _ is not node_toGray]
+  def Delete_B_Neighbor(self, node_toChange):
+    self.neighbor_b_list = [ _ for _ in self.neighbor_b_list if _ is not node_toChange]
 
   # 印出資訊
   def PrintContent(self):
