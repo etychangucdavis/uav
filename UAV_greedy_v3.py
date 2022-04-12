@@ -1,40 +1,7 @@
 import numpy as np
 import pandas as pd
 import math
-class Node:
-  def __init__(self, id, x=0, y=0, color=0):
-    self.color = color # 0:white 1:black
-    self.id = id
-    self.x = x
-    self.y = y
-    self.neighbor_w_list = [] # 白鄰居表
-    self.neighbor_list = [] # 鄰居表
-
-  # 染黑此節點，並更新周圍鄰居的白鄰居表
-  def ToBlack(self):
-    self.color = 1
-    for node in self.neighbor_list:
-      node.DeleteNeighbor(self)
-
-  # 設置白鄰居列表
-  def SetWhiteNeighborList(self, white_neighbor):
-    self.neighbor_w_list.append(white_neighbor)
-
-  # 設置鄰居列表
-  def SetNeighborList(self, neighbor):
-    self.neighbor_list.append(neighbor)
-
-  # 取得白鄰居列表
-  def GetWhiteNeighborList(self):
-    return self.neighbor_w_list
-
-  # 刪除某個鄰居
-  def DeleteNeighbor(self, node_toBlack):
-    self.neighbor_w_list = [ _ for _ in self.neighbor_w_list if _ is not node_toBlack]
-
-  # 印出資訊
-  def PrintContent(self):
-      print(f' ID : {self.id} , x : {self.x}, y : {self.y}, color : {"Black" if self.color else "White"}')
+from DefineNode import Node_greedy as Node
 
 class Topology:
   '''
@@ -85,9 +52,11 @@ class Topology:
   # 執行演算法
   def RunGreedy(self):
     # start from line 5 
+    iters = 1
     while(self.CheckWhiteNeighbor()):
       B = self.B_
       self.B_ = []
+      every_round = []
       for node in B:
         w_list = node.GetWhiteNeighborList()
         self.R += [w_x for w_x in w_list if w_x not in self.R]
@@ -101,6 +70,7 @@ class Topology:
             x = node
         # S = S Union {x}
         self.S.append(x)
+        every_round.append(x)
         # B = B - {x}
         B = [node for node in B if node is not x]
         # color nodes in w(x) as black
@@ -111,16 +81,19 @@ class Topology:
         self.R = [ _ for _ in self.R if _ not in w_x]
         # B' = B' Union w(x)
         self.B_ += [ _ for _ in w_x if _ not in self.B_]
-
+      print(f' -----{iters}th-----')  
+      for node in every_round:
+        node.PrintContent()
+      iters += 1
     return self.S
 
 # 計算兩點之間的距離
 def ComputeDistance(x, y):
     return math.hypot(x, y)
 
-test = Topology(mode='triangle', radius=1)
+test = Topology(mode='square_four', radius= math.sqrt(2))
 test.UpdateNeighbor()
 s = test.RunGreedy()
 
-for node in s:
-   node.PrintContent()
+# for node in s:
+#    node.PrintContent()
