@@ -63,6 +63,7 @@ class Topology:
     iters = 1
     while(self.CheckWhiteNeighbor()):
       B = self.B_
+      self.B_ = []
       # Candidate set
       self.C = []
       # 回傳self.C之前將染黑的節點染回白色
